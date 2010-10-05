@@ -1,0 +1,43 @@
+grammar SchemeGrammar
+    rule object
+        list / number / string / symbol {
+            def value
+                elements[0].value
+            end
+        }
+    end
+
+    rule number
+        [0-9]+ {
+            def value
+                text_value.to_i
+            end
+        }
+    end
+
+    rule string
+        '"' [^"]+ '"' {
+            def value
+                elements[1...-1].map(&proc {|x| x.text_value}).join('')
+            end
+        }
+    end
+
+    rule symbol
+        [a-z\+\=\?\*\-]+ {
+            def value
+                text_value
+            end
+        }
+    end
+
+    rule list
+        '(' object (' ' object)* ')' {
+            def value
+                [elements[1].value] + elements[2].elements.map do |e|
+                                e.elements[1].value
+                end
+            end
+        }
+    end
+end
