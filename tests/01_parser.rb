@@ -1,4 +1,4 @@
-require "scheme";
+require "lib/scheme";
 require "test/unit";
 
 class TestSchemeParser < Test::Unit::TestCase
@@ -16,36 +16,37 @@ class TestSchemeParser < Test::Unit::TestCase
     end
 
     def test_lists
-        assert_equal(1, Scheme::scheme_parse("(1 2 3)")[0])
-        assert_equal(2, Scheme::scheme_parse("(1 2 3)")[1])
-        assert_equal(3, Scheme::scheme_parse("(1 2 3)")[2])
-        #assert_equal(Scheme::scheme_parse("(1 2 3)").cdr.cdr.cdr, SchemeSymbol.new('nil'))
-        assert_equal(4, Scheme::scheme_parse("(1 2 3 (4 5 6))")[3][0])
-        assert_equal(5, Scheme::scheme_parse("(1 2 3 (4 5 6))")[3][1])
-        assert_equal(42, Scheme::scheme_parse("(((42)))")[0][0][0])
-        p Scheme::scheme_parse("(1 2 3 (4 5 6))")
+        assert_equal(1, Scheme::scheme_parse("(1 2 3)").car)
+        assert_equal(2, Scheme::scheme_parse("(1 2 3)").cdr.car)
+        assert_equal(3, Scheme::scheme_parse("(1 2 3)").cdr.cdr.car)
+        assert_equal(nil, Scheme::scheme_parse("(1 2 3)").cdr.cdr.cdr)
+        assert_equal(4, Scheme::scheme_parse("(1 2 3 (4 5 6))").cdr.cdr.cdr.car.car)
+        assert_equal(nil, Scheme::scheme_parse("(1 2 3 (4 5 6))").cdr.cdr.cdr.cdr)
+        assert_equal(42, Scheme::scheme_parse("(((42)))").car.car.car)
+
+        assert_equal(nil, Scheme::scheme_parse("(1 2 3 (4 5 6))").cdr.cdr.cdr.cdr)
+        assert_equal(1, Scheme::scheme_parse("(1 2 3 (4 5 6 (1 (1 (1 (1))))))").cdr.cdr.cdr.car.cdr.cdr.cdr.car.cdr.car.cdr.car.car)
     end
 
-    # is(scheme-parse("(1 2 3 (4 5 6))").cdr.cdr.cdr.cdr, SchemeSymbol.new('nil'));
-    # is(scheme-parse("(1 2 3 (4 5 6 (1 (1 (1 (1))))))").cdr.cdr.cdr.car.cdr.cdr.cdr.car.cdr.car.cdr.car.car, 1);
 
-    # my $true_false = scheme-parse("(#t #f)");
-    # is($true_false.car , True);
-    # is($true_false.cdr.car , False);
+    def test_symbols
+        assert_equal(Scheme::scheme_parse("(#t #f)").car , true)
+        assert_equal(Scheme::scheme_parse("(#t #f)").cdr.car , false)
 
-    # my $quoted = scheme-parse("(quote abv)");
-    # is($quoted.car, SchemeSymbol.new('quote'));
-    # is($quoted.cdr.car, SchemeSymbol.new('abv'));
+        assert_equal(4, Scheme::scheme_parse("(4 symbol other 5)").car)
+        assert_equal(:symbol, Scheme::scheme_parse("(symbol symbol)").car)
+        assert_equal(Scheme::scheme_parse("(quote abv)").cdr.car, :abv)
 
-    # is(scheme-parse("(null? nil)").car, SchemeSymbol.new('null?'));
+        assert_equal(Scheme::scheme_parse("(null? nil)").car, :null?)
 
-    # is(scheme-parse('(a)').car, SchemeSymbol.new('a'));
+        assert_equal(Scheme::scheme_parse('(a)').car, :a)
 
-    # is(scheme-parse("nil"), SchemeSymbol.new('nil'));
-    # is(scheme-parse("(cons 1 nil)").cdr.cdr.car, SchemeSymbol.new('nil'));
-    # is(scheme-parse("(cons 1 2)").car, SchemeSymbol.new('cons'));
-    # is(scheme-parse("(cons 1 (cons 1 2))").cdr.cdr.car.car, SchemeSymbol.new('cons'));
-    # is(scheme-parse("((cons 1  2) (cons 1 2))").cdr.car.car, SchemeSymbol.new('cons'));
+        assert_equal(Scheme::scheme_parse("nil"), nil)
+        assert_equal(Scheme::scheme_parse("(cons 1 nil)").cdr.cdr.car, nil)
+        assert_equal(Scheme::scheme_parse("(cons 1 2)").car, :cons)
+        assert_equal(Scheme::scheme_parse("(cons 1 (cons 1 2))").cdr.cdr.car.car, :cons)
+        assert_equal(Scheme::scheme_parse("((cons 1  2) (cons 1 2))").cdr.car.car, :cons)
 
-    # is(scheme-parse("(begin (define proc1 (lambda (x) (define proc2 (lambda (y) (+ x y))) (proc2 7))) (proc1 10))").WHAT, SPair);
+        assert_equal(Scheme::scheme_parse("(begin (define proc1 (lambda (x) (define proc2 (lambda (y) (+ x y))) (proc2 7))) (proc1 10))").class, SchemeTypes::Pair)
+    end
 end

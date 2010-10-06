@@ -1,0 +1,69 @@
+grammar SchemeGrammar
+    rule object
+        list / number / string / nil / true / false / symbol / '~' {
+            def value
+                elements[0].value
+            end
+        }
+    end
+
+    rule number
+        [0-9]+ {
+            def value
+                text_value.to_i
+            end
+        }
+    end
+
+    rule string
+        '"' [^"]+ '"' {
+            def value
+                elements[1...-1].map(&proc {|x| x.text_value}).join('')
+            end
+        }
+    end
+
+    rule symbol
+        [a-z0-9\+\=\?\*\-]+ {
+            def value
+                text_value.to_sym
+            end
+        }
+    end
+
+    rule list
+        '(' object (' '+ object)* ')' {
+            def value
+                SchemeTypes.make_linked_list(
+                    [elements[1].value] + elements[2].elements.map do |e|
+                                    e.elements[1].value
+                    end
+                )
+            end
+        }
+    end
+
+    rule true
+        '#t' {
+            def value
+                true
+            end
+        }
+    end
+    
+    rule false
+        '#f' {
+            def value
+                false
+            end
+        }
+    end
+
+    rule nil
+        'nil' {
+            def value
+                nil
+            end
+        }
+    end
+end
