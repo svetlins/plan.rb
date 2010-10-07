@@ -34,7 +34,7 @@ grammar SchemeGrammar
     rule list
         '(' object (' '+ object)* ')' {
             def value
-                SchemeTypes.make_linked_list(
+                Scheme.make_linked_list(
                     [elements[1].value] + elements[2].elements.map do |e|
                                     e.elements[1].value
                     end

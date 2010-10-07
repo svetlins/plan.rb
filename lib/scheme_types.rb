@@ -1,10 +1,26 @@
-module SchemeTypes
+module Scheme
 
-    class SchemeTypes::Pair
+    class Pair
         attr_reader :car, :cdr
 
         def initialize(car, cdr)
             @car, @cdr = car, cdr
+        end
+
+        def map &block
+            if @cdr
+                Pair.new(yield(@car), @cdr.map(&block))
+            else
+                Pair.new(yield(@car), nil)
+            end
+        end
+
+        def zip other
+            if @cdr
+                [[@car, other.car]] + @cdr.zip(other.cdr)
+            else
+                [[@car, other.car]]
+            end
         end
     end
 
@@ -26,4 +42,3 @@ module SchemeTypes
         _make_linked_list_iter(nil, list.reverse)
     end
 end
-        

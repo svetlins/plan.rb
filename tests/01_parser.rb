@@ -47,6 +47,6 @@ class TestSchemeParser < Test::Unit::TestCase
         assert_equal(Scheme::scheme_parse("(cons 1 (cons 1 2))").cdr.cdr.car.car, :cons)
         assert_equal(Scheme::scheme_parse("((cons 1  2) (cons 1 2))").cdr.car.car, :cons)
 
-        assert_equal(Scheme::scheme_parse("(begin (define proc1 (lambda (x) (define proc2 (lambda (y) (+ x y))) (proc2 7))) (proc1 10))").class, SchemeTypes::Pair)
+        assert_equal(Scheme::scheme_parse("(begin (define proc1 (lambda (x) (define proc2 (lambda (y) (+ x y))) (proc2 7))) (proc1 10))").class, Scheme::Pair)
     end
 end
