@@ -27,7 +27,7 @@ module Scheme
     # self evaluating
     @evaluation_handlers.push([
         lambda do |exp, env| 
-            [Numeric, String, TrueClass, FalseClass].map do |type|
+            [Numeric, String, TrueClass, FalseClass, NilClass].map do |type|
                 exp.is_a? type
             end.any?
         end,
@@ -140,7 +140,7 @@ module Scheme
             end
         end
 
-        raise "Cannot evaluate %{expression}"
+        raise "Cannot evaluate %s" % expression
     end
 
     def self.run(code, env=nil)
@@ -150,7 +150,19 @@ module Scheme
         default_env.set(:*, NativeProcedure.new(lambda { |_| _.car * _.cdr.car }))
         default_env.set(:-, NativeProcedure.new(lambda { |_| _.car - _.cdr.car }))
         default_env.set(:'=', NativeProcedure.new(lambda { |_| _.car == _.cdr.car }))
-        ast = parse code
+        default_env.set(:cons, NativeProcedure.new(lambda { |_| Pair.new(_.car, _.cdr.car) }))
+        default_env.set(:car, NativeProcedure.new(lambda { |_| _.car.car }))
+        default_env.set(:cdr, NativeProcedure.new(lambda { |_| _.car.cdr }))
+        default_env.set(:null?, NativeProcedure.new(lambda { |_| _.car.nil? }))
+
+        # clean code
+        cleaned_code = code.strip.sub(/\s{2,}/, ' ')
+        while cleaned_code != code
+            code = cleaned_code
+            cleaned_code = code.sub(/\s{2,}/, ' ')
+        end
+
+        ast = parse cleaned_code
 
         if env
             default_env = default_env.extend env

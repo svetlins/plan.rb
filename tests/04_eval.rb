@@ -20,6 +20,7 @@ class EvaluatorTests < Test::Unit::TestCase
         assert_equal("svetlin", Scheme::run("\"svetlin\""))
         assert_equal(true, Scheme::run("#t"))
         assert_equal(false, Scheme::run("#f"))
+        assert_equal(nil, Scheme::run("nil"))
     end
 
     def test_var_lookup
@@ -72,51 +73,49 @@ class EvaluatorTests < Test::Unit::TestCase
         assert_equal(3628800, Scheme::run("(begin (define fact (lambda (n) (if (= n 1) 1 (* n (fact (- n 1)))))) (fact 10))"))
     end
 
-    # def test_old
-    #     assert_equal(Scheme::run("(if #t 1 2)"), 1)
-    #     assert_equal(Scheme::run("(if #f 1 2)"), 2)
-    # end
+    def test_old
+        assert_equal(1, Scheme::run("(if #t 1 2)"))
+        assert_equal(2, Scheme::run("(if #f 1 2)"))
+    end
 
-    # def test_cons
-    #     assert_equal(Scheme::run("(cons 1 2)").car, 1)
-    #     assert_equal(Scheme::run("(cons 1 2)").cdr, 2)
-    #     assert_equal(Scheme::run("(cons 1 nil)").cdr, SchemeSymbol.new('nil'))
-    #     assert_equal(Scheme::run("(cons 1 (cons 2 nil))").car, 1)
-    #     assert_equal(Scheme::run("(cons 1 (cons 2 nil))").cdr.car, 2)
-    #     assert_equal(Scheme::run("(cons 1 (cons 2 nil))").cdr.cdr, SchemeSymbol.new('nil'))
-    # end
+    def test_cons
+        assert_equal(1, Scheme::run("(cons 1 2)").car)
+        assert_equal(2, Scheme::run("(cons 1 2)").cdr)
+        assert_equal(nil, Scheme::run("(cons 1 nil)").cdr)
+        assert_equal(1, Scheme::run("(cons 1 (cons 2 nil))").car)
+        assert_equal(2, Scheme::run("(cons 1 (cons 2 nil))").cdr.car)
+        assert_equal(nil, Scheme::run("(cons 1 (cons 2 nil))").cdr.cdr)
+    end
 
-    # def test_car_cdr
-    #     assert_equal(Scheme::run("(car (cons 1 2))"), 1)
-    #     assert_equal(Scheme::run("(cdr (cons 1 2))"), 2)
-    #     assert_equal(Scheme::run("(car (cdr (cdr (cons 1 (cons 2 (cons 3 nil))))))"), 3)
-    # end
+    def test_car_cdr
+        assert_equal(1, Scheme::run("(car (cons 1 2))"))
+        assert_equal(2, Scheme::run("(cdr (cons 1 2))"))
+        assert_equal(3, Scheme::run("(car (cdr (cdr (cons 1 (cons 2 (cons 3 nil))))))"))
+    end
 
-    # def test_null
-    #     assert_equal(Scheme::run("(null? nil)"), True)
-    #     assert_equal(Scheme::run("(null? 5)"), False)
-    # end
+    def test_null
+        assert_equal(true, Scheme::run("(null? nil)"))
+        assert_equal(false, Scheme::run("(null? 5)"))
+    end
 
-    # def test_complex
-    #     my $begin-func = "
-    #         (begin (define proc 
-    #                        (lambda (x)
-    #                                (+ x 11)))
-    #                (proc 30))
-    #     "
+    def test_complex
+        code = "
+            (begin (define proc 
+                           (lambda (x)
+                                   (+ x 11)))
+                   (proc 30))
+        "
 
-    #     assert_equal(Scheme::run($begin-func.replace("\n", '')), 41)
+        assert_equal(Scheme::run(code), 41)
 
-    #     my $complex-program = "
-    #         (begin (define proc1
-    #                       (lambda (x) 
-    #                               (define proc2 
-    #                                       (lambda (y) (+ x y))) 
-    #                               (proc2 7))) 
-    #                (proc1 10))
-    #     "
-    #     
-    #     $complex-program = $complex-program.subst(rx/ \s+ /, ' ', :g).trim
-    #     assert_equal(Scheme::run($complex-program), 17)
-    # end
+        complex_code = "
+            (begin (define proc1
+                          (lambda (x) 
+                                  (define proc2 
+                                          (lambda (y) (+ x y))) 
+                                  (proc2 7))) 
+                   (proc1 10))
+        "
+        assert_equal(Scheme::run(complex_code), 17)
+    end
 end
