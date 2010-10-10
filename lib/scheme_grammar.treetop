@@ -8,7 +8,7 @@ grammar SchemeGrammar
     end
 
     rule number
-        [0-9]+ {
+        [\+\-]? [0-9]+ {
             def value
                 text_value.to_i
             end
