@@ -27,43 +27,50 @@ class EvaluatorTests < Test::Unit::TestCase
         assert_equal(42, Scheme::run("var", env_var))
     end
 
-    # def test_quote
-    #     assert_equal(Scheme::run("(quote a)"), :a)
-    # end
+    def test_quote
+        assert_equal(:a, Scheme::run("(quote a)"))
+        assert_equal(1, Scheme::run("(quote (1 2 3))").car)
+        assert_equal(3, Scheme::run("(quote (1 2 3))").cdr.cdr.car)
+    end
 
-    # def test_begin
-    #     assert_equal(Scheme::run("(begin 1 2 3)"), 3)
-    #     my $env-var2 = Environment.new(*).extend(Hash.new(:var(42)))
-    #     assert_equal(Scheme::run("(begin var)", $env-var2), 42)
-    # end
+    def test_begin
+        assert_equal(3, Scheme::run("(begin 1 2 3)"))
 
-    # def test_set
-    #     assert_equal(Scheme::run("(begin (set a 69) a)"), 69)
-    # end
+        env_var = {:var => 42}
 
-    # def test_define
-    #     assert_equal(Scheme::run("(begin (define a 42) a)"), 42)
-    # end
+        assert_equal(42, Scheme::run("(begin var)", env_var))
+    end
 
-    # def test_if
-    #     assert_equal(Scheme::run("(if #t \"baba\" \"dyado\")"), "baba")
-    #     assert_equal(Scheme::run("(if #f \"baba\" \"dyado\")"), "dyado")
-    # end
+    def test_set
+        assert_equal(69, Scheme::run("(begin (set! a 69) a)"))
+    end
 
-    # def test_lambda
-    #     assert_equal(Scheme::run("((lambda (x) x) 42)"), 42)
-    #     assert_equal(Scheme::run("(begin (define myproc (lambda (x) x)) (myproc 1337))"), 1337)
-    # end
+    def test_define
+        assert_equal(42, Scheme::run("(begin (define a 42) a)"))
+    end
 
-    # def test_operations
-    #     assert_equal(Scheme::run("(+ 1 1)"), 2)
-    #     assert_equal(Scheme::run("(+ 1 (+ 1 1))"), 3)
-    #     assert_equal(Scheme::run("(- 42 1)"), 41)
-    #     assert_equal(Scheme::run("(* 2 (* 2 2))"), 8)
-    #     assert_equal(Scheme::run("(= 1 1)"), True)
-    #     assert_equal(Scheme::run("(= 1 2)"), False)
-    #     assert_equal(Scheme::run("(begin (define fact (lambda (n) (if (= n 1) 1 (* n (fact (- n 1)))))) (fact 10))"), 3628800)
-    # end
+    def test_if
+        assert_equal("baba", Scheme::run("(if #t \"baba\" \"dyado\")"))
+        assert_equal("dyado", Scheme::run("(if #f \"baba\" \"dyado\")"))
+
+        # no else clause
+        assert_equal(nil, Scheme::run("(if #f \"baba\")"))
+    end
+
+    def test_lambda
+        assert_equal(42, Scheme::run("((lambda (x) x) 42)"))
+        assert_equal(1337, Scheme::run("(begin (define myproc (lambda (x) x)) (myproc 1337))"))
+    end
+
+    def test_operations
+        assert_equal(2, Scheme::run("(+ 1 1)"))
+        assert_equal(3, Scheme::run("(+ 1 (+ 1 1))"))
+        assert_equal(41, Scheme::run("(- 42 1)"))
+        assert_equal(8, Scheme::run("(* 2 (* 2 2))"))
+        assert_equal(true, Scheme::run("(= 1 1)"))
+        assert_equal(false, Scheme::run("(= 1 2)"))
+        assert_equal(3628800, Scheme::run("(begin (define fact (lambda (n) (if (= n 1) 1 (* n (fact (- n 1)))))) (fact 10))"))
+    end
 
     # def test_old
     #     assert_equal(Scheme::run("(if #t 1 2)"), 1)

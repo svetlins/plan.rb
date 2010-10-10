@@ -24,6 +24,31 @@ module Scheme
         end
     end
 
+    class Procedure
+        def initialize params, exps, env
+            @params, @exps, @env = params, exps, env
+        end
+
+        def apply args
+            bindings = {}
+            @params.zip(args).each do |k,v|
+                bindings[k] = v
+            end
+
+            Scheme::evaluate_list @exps, @env.extend(bindings)
+        end
+    end
+
+    class NativeProcedure
+        def initialize procedure
+            @procedure = procedure
+        end
+
+        def apply args
+            @procedure[args]
+        end
+    end
+
     # ----
     private
 
