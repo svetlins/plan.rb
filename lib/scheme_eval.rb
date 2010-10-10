@@ -172,4 +172,13 @@ module Scheme
 
         return evaluate(ast, default_env)
     end
+
+    def self.run_repl
+        while true
+            print ">"
+            code = readline
+            result = run code
+            puts result
+        end
+    end
 end
