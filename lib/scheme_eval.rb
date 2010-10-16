@@ -157,11 +157,8 @@ module Scheme
         default_env.set(:null?, NativeProcedure.new(lambda { |_| _.car.nil? }))
 
         # clean code
-        cleaned_code = code.strip.sub(/\s{2,}/, ' ')
-        while cleaned_code != code
-            code = cleaned_code
-            cleaned_code = code.sub(/\s{2,}/, ' ')
-        end
+        cleaned_code = clean_code code
+        puts code, cleaned_code
 
         ast = parse cleaned_code
 

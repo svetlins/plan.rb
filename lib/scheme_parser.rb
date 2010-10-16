@@ -5,4 +5,15 @@ module Scheme
     def self.parse(stuff)
         SchemeGrammarParser.new.parse(stuff).value
     end
+
+    def self.clean_code(code)
+        cleaned_code = code.strip.sub(/\s{2,}/, ' ')
+        while cleaned_code != code
+            code = cleaned_code
+            cleaned_code = code.sub(/\s{2,}/, ' ')
+        end
+
+        return cleaned_code
+    end
+
 end
