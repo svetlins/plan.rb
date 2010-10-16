@@ -120,4 +120,11 @@ class EvaluatorTests < Test::Unit::TestCase
         "
         assert_equal(Scheme::run(complex_code), 17)
     end
+
+    # no standard library yet
+    # def test_map
+    #     assert_equal(Scheme::run("(map (lambda (x) (* x x)) (quote (1 2 3)))").car, 1)
+    #     assert_equal(Scheme::run("(map (lambda (x) (* x x)) (quote (1 2 3)))").cdr.car, 4)
+    #     assert_equal(Scheme::run("(map (lambda (x) (* x x)) (quote (1 2 3)))").cdr.cdr.car, 9)
+    # end
 end
