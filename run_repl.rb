@@ -1,17 +1,23 @@
 #!/usr/bin/env ruby
 libdir = `pwd`.strip
-puts libdir
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 require 'lib/scheme'
 
-# kind of lame :)
-puts "
- |                         |    
- ,---.,---.|---.,---.,-.-.,---. ,---.|---.
- `---.|    |   ||---'| | ||---' |    |   |
- `---'`---'`   '`---'` ' '`---'o`    `---'
+def draw_welcome_note logo
+    width = logo.split("\n").max { |x,y| x.length - y.length }.length
+
+    puts '-' * width
+    puts logo.strip
+    puts '-' * width
+end
+
+logo = "
+,---.,---.|---.,---.,-.-.,---. ,---.|---.
+`---.|    |   ||---'| | ||---' |    |   |
+`---'`---'`   '`---'` ' '`---'o`    `---'
 "
-puts "=" * 42
+
+draw_welcome_note logo
 
 Scheme::run_repl
