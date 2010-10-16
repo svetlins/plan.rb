@@ -27,7 +27,7 @@ module Scheme
 
     # self evaluating
     @evaluation_handlers.push([
-        lambda do |exp, env| 
+        lambda do |exp| 
             [Numeric, String, TrueClass, FalseClass, NilClass].map do |type|
                 exp.is_a? type
             end.any?
@@ -40,7 +40,7 @@ module Scheme
 
     # var lookup
     @evaluation_handlers.push([
-        lambda do |exp, env|
+        lambda do |exp|
             exp.is_a? Symbol
         end,
 
@@ -51,7 +51,7 @@ module Scheme
 
     # quote
     @evaluation_handlers.push([
-        lambda do |exp, env|
+        lambda do |exp|
             tagged_list?(exp, 'quote')
         end,
         lambda do |exp, env|
@@ -61,7 +61,7 @@ module Scheme
 
     # begin
     @evaluation_handlers.push([
-        lambda do |exp, env|
+        lambda do |exp|
             tagged_list?(exp, 'begin')
         end,
         lambda do |exp, env|
@@ -71,7 +71,7 @@ module Scheme
 
     # define / set
     @evaluation_handlers.push([
-        lambda do |exp, env|
+        lambda do |exp|
             tagged_list?(exp, 'set!') or tagged_list?(exp, 'define')
         end,
         lambda do |exp, env|
@@ -84,7 +84,7 @@ module Scheme
 
     # if
     @evaluation_handlers.push([
-        lambda do |exp, env|
+        lambda do |exp|
             tagged_list?(exp, 'if')
         end,
         lambda do |exp, env|
@@ -107,7 +107,7 @@ module Scheme
 
     # lambda!
     @evaluation_handlers.push([
-        lambda do |exp, env|
+        lambda do |exp|
             tagged_list?(exp, 'lambda')
         end,
         lambda do |exp, env|
@@ -120,7 +120,7 @@ module Scheme
 
     # proc evaluation!
     @evaluation_handlers.push([
-        lambda do |exp, env|
+        lambda do |exp|
             exp.is_a? Pair
         end,
         lambda do |exp, env|
@@ -136,7 +136,7 @@ module Scheme
     def self.evaluate(expression, env)
 
         @evaluation_handlers.each do |pred, handler|
-            if pred[expression, env]
+            if pred[expression]
                 return handler[expression, env]
             end
         end
