@@ -145,37 +145,32 @@ module Scheme
     end
 
     def self.run(code, env=nil)
-        default_env = Environment.new
-        #populate default env
-        default_env.set(:+, NativeProcedure.new(lambda { |_| _.car + _.cdr.car }))
-        default_env.set(:*, NativeProcedure.new(lambda { |_| _.car * _.cdr.car }))
-        default_env.set(:-, NativeProcedure.new(lambda { |_| _.car - _.cdr.car }))
-        default_env.set(:'=', NativeProcedure.new(lambda { |_| _.car == _.cdr.car }))
-        default_env.set(:cons, NativeProcedure.new(lambda { |_| Pair.new(_.car, _.cdr.car) }))
-        default_env.set(:car, NativeProcedure.new(lambda { |_| _.car.car }))
-        default_env.set(:cdr, NativeProcedure.new(lambda { |_| _.car.cdr }))
-        default_env.set(:null?, NativeProcedure.new(lambda { |_| _.car.nil? }))
-
         # clean code
         cleaned_code = clean_code code
-        puts code, cleaned_code
 
+        # parse code
         ast = parse cleaned_code
 
+        # apply any given bindings to global env
         if env
-            default_env = default_env.extend env
+            current_env = @default_env.extend env
+        else
+            current_env = @default_env
         end
 
-        return evaluate(ast, default_env)
+        return evaluate(ast, current_env)
     end
-
-    global_state = {}
 
     def self.run_repl
         while true
             print ">"
+            # read 
             code = readline
+
+            # eval, print
             puts run code
+
+            #loop
         end
     end
 end
