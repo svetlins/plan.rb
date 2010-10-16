@@ -46,6 +46,7 @@ class TestSchemeParser < Test::Unit::TestCase
         assert_equal(:a, Scheme::parse('(a)').car)
 
         assert_equal(nil, Scheme::parse("nil"))
+        assert_equal(nil, Scheme::parse("()"))
         assert_equal(nil, Scheme::parse("(cons 1 nil)").cdr.cdr.car)
         assert_equal(:cons, Scheme::parse("(cons 1 2)").car)
         assert_equal(:cons, Scheme::parse("(cons 1 (cons 1 2))").cdr.cdr.car.car)

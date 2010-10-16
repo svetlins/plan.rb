@@ -1,6 +1,6 @@
 grammar SchemeGrammar
     rule object
-        list / number / string / nil / true / false / symbol / '~' {
+        list / number / string / nil / other_nil / true / false / symbol / '~' {
             def value
                 elements[0].value
             end
@@ -61,6 +61,14 @@ grammar SchemeGrammar
 
     rule nil
         'nil' {
+            def value
+                nil
+            end
+        }
+    end
+    
+    rule other_nil
+        '()' {
             def value
                 nil
             end
