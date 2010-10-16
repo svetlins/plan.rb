@@ -1,16 +1,18 @@
 module Scheme
     class Environment
+        attr_reader :bindings
+
         def initialize(parent=nil)
-            @hash = {}
+            @bindings = {}
             @parent = parent
         end
 
         def get(key)
-            @hash[key] or (@parent and @parent.get(key))
+            @bindings[key] or (@parent and @parent.get(key))
         end
 
         def set(key, val)
-            @hash[key] = val
+            @bindings[key] = val
         end
 
         def extend(new_bindings)
