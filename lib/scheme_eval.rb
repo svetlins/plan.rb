@@ -15,10 +15,11 @@ module Scheme
     end
 
     def self.values_list values, env
-        if values.cdr
+        if values
             Pair.new(evaluate(values.car, env), values_list(values.cdr, env))
         else
-            Pair.new(evaluate(values.car, env), :nil)
+            # Pair.new(evaluate(values.car, env), :nil)
+            nil
         end
     end
 
@@ -168,17 +169,16 @@ module Scheme
             default_env = default_env.extend env
         end
 
-        # default_env.set('+', NativeProc...)
-
         return evaluate(ast, default_env)
     end
+
+    global_state = {}
 
     def self.run_repl
         while true
             print ">"
             code = readline
-            result = run code
-            puts result
+            puts run code
         end
     end
 end

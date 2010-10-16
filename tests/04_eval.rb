@@ -61,6 +61,8 @@ class EvaluatorTests < Test::Unit::TestCase
     def test_lambda
         assert_equal(42, Scheme::run("((lambda (x) x) 42)"))
         assert_equal(1337, Scheme::run("(begin (define myproc (lambda (x) x)) (myproc 1337))"))
+        # no args
+        assert_equal(1337, Scheme::run("(begin (define myproc (lambda () 1337)) (myproc))"))
     end
 
     def test_operations

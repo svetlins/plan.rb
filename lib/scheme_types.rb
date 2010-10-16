@@ -31,8 +31,10 @@ module Scheme
 
         def apply args
             bindings = {}
-            @params.zip(args).each do |k,v|
-                bindings[k] = v
+            if @params
+                @params.zip(args).each do |k,v|
+                    bindings[k] = v
+                end
             end
 
             Scheme::evaluate_list @exps, @env.extend(bindings)
