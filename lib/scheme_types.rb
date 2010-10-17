@@ -22,6 +22,25 @@ module Scheme
                 [[@car, other.car]]
             end
         end
+
+        def to_s
+            if @cdr.is_a? Pair or @cdr.is_a? NilClass
+                # assume linked list and print the whole list
+                current = self
+                result = []
+
+                while current
+                    result.push(current.car.to_s)
+                    current = current.cdr
+                end
+
+                return '(' + result.join(' ') + ')'
+            else
+                # assume just a single pair
+
+                return '(' + @car.to_s + ' . ' + @cdr.to_s + ')'
+            end
+        end
     end
 
     class Procedure

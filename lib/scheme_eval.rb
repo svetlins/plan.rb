@@ -168,7 +168,7 @@ module Scheme
             code = readline
 
             # eval, print
-            puts run code
+            puts (run code).to_s
 
             #loop
         end
