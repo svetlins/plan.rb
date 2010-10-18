@@ -42,6 +42,7 @@ class TestSchemeParser < Test::Unit::TestCase
         assert_equal(:abv, Scheme::parse("(quote abv)").cdr.car)
 
         assert_equal(:null?, Scheme::parse("(null? nil)").car)
+        assert_equal(:'hyphenated-stuff', Scheme::parse("(hyphenated-stuff nil)").car)
 
         assert_equal(:a, Scheme::parse('(a)').car)
 
