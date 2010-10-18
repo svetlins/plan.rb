@@ -25,5 +25,6 @@ class TestPrint < Test::Unit::TestCase
 
     def test_print_nil
         assert_equal('(null? nil)', Scheme::parse('(null? nil)').to_s)
+        assert_equal('(null? nil)', Scheme::parse('(null? ())').to_s)
     end
 end
