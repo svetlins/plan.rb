@@ -28,8 +28,12 @@ module Scheme
             # read 
             code = readline
 
-            # eval, print
-            puts (run code).to_s
+            # eval
+            result = run code
+
+            # print
+            print '=>'
+            puts result.to_s
 
             #loop
         end
