@@ -41,4 +41,9 @@ module Scheme
             :null?,
             NativeProcedure.new(lambda { |_| _.car.nil? })
         )
+
+        @global_env.set(
+            :display,
+            NativeProcedure.new(lambda { |_| puts _.car.to_s })
+        )
 end
