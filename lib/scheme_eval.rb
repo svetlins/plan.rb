@@ -16,7 +16,16 @@ module Scheme
 
     def self.procedure_call? exp
         # very naive
-        exp.is_a? Pair and not [:if, :begin, :define].member? exp
+        not_relevant = [
+            :if,
+            :begin,
+            :define,
+            :+,
+            :-,
+            :*,
+            :'=',
+        ]
+        exp.is_a? Pair and not not_relevant.member? exp.car
     end
 
     def self.evaluate_proc_body exp, env
