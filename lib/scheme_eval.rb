@@ -14,16 +14,45 @@ module Scheme
         end
     end
 
+    def self.procedure_call? exp
+        # very naive
+        exp.is_a? Pair and not [:if, :begin, :define].member? exp
+    end
+
+    def self.evaluate_proc_body exp, env
+        if exp.cdr
+            evaluate(exp.car, env)
+            evaluate_proc_body(exp.cdr, env)
+        else
+            # this is the last expression
+            # it is in else because it's value is the value
+            # of the procedure, and because it should be 
+            # analyzed for tail call
+            last_exp = exp.car
+            
+            # analyze for tail call
+            if last_exp.is_a? Pair
+                if procedure_call? last_exp
+                    throw :tailcall, [last_exp, env]
+                elsif last_exp.car == :if
+                    return evaluate(last_exp, env)
+                end
+            end
+                
+            return evaluate(last_exp, env)
+        end
+    end
+
     def self.values_list values, env
         if values
             Pair.new(evaluate(values.car, env), values_list(values.cdr, env))
         else
-            # Pair.new(evaluate(values.car, env), :nil)
             nil
         end
     end
 
     @evaluation_handlers = []
+    @in_procedure = []
 
     # self evaluating
     @evaluation_handlers.push([
@@ -118,17 +147,63 @@ module Scheme
         end
     ])
 
+    eval_app = lambda do |exp, env|
+            new_exp,new_env = catch :tailcall do
+                procedure_exp = exp.car
+                arg_exps = exp.cdr
+
+                # evaluate procedure
+                procedure = evaluate(procedure_exp, env)
+
+                # evaluate arguments left to right
+                arguments = values_list(arg_exps, env)
+
+                # apply
+                result = procedure.apply arguments
+
+                return result
+            end
+
+            return [new_exp, new_env]
+    end
+
     # proc evaluation!
     @evaluation_handlers.push([
         lambda do |exp|
             exp.is_a? Pair
         end,
         lambda do |exp, env|
-            procedure = exp.car
-            args = exp.cdr
-            
-            evaluate(procedure, env).apply(values_list(args, env))
+            result = eval_app[exp, env]
+
+            while result.is_a? Array
+                result = eval_app[*result]
+            end
+
+            result
         end
+        #lambda do |exp, env|
+        #    evaluate_application = lambda do |exp, env|
+        #        procedure_exp = exp.car
+        #        arg_exps = exp.cdr
+
+        #        # evaluate procedure
+        #        procedure = evaluate(procedure_exp, env)
+
+        #        # evaluate arguments left to right
+        #        arguments = values_list(arg_exps, env)
+
+        #        # apply
+        #        result = procedure.apply arguments
+
+        #        return result
+        #    end
+
+        #    new_exp,new_env = catch :tailcall do
+        #        return evaluate_application[exp, env]
+        #    end
+
+        #    return evaluate_application[new_exp, new_env]
+        #end
     ])
     
     public

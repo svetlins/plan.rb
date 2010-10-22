@@ -56,7 +56,7 @@ module Scheme
                 end
             end
 
-            Scheme::evaluate_list @exps, @env.extend(bindings)
+            Scheme::evaluate_proc_body @exps, @env.extend(bindings)
         end
     end
 
@@ -65,7 +65,7 @@ module Scheme
             @procedure = procedure
         end
 
-        def apply args
+        def apply args, proc_ref = nil
             @procedure[args]
         end
     end
