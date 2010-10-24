@@ -15,7 +15,10 @@ class TestPrint < Test::Unit::TestCase
         assert_equal('(+ 1 2)', Scheme::parse('(+ 1 2)').to_s)
         assert_equal('(null? 5)', Scheme::parse('(null? 5)').to_s)
 
-        assert_equal('(1 2 3)', Scheme::run('(cons 1 (cons 2 (cons 3 nil)))').to_s)
+        assert_equal(
+            '(1 2 3)',
+            Scheme::run('(cons 1 (cons 2 (cons 3 nil)))').to_s
+        )
     end
 
     def test_print_pair
