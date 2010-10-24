@@ -1,6 +1,4 @@
 module Scheme
-    private
-
     def self.tagged_list? exp, tag
         exp.is_a? Pair and exp.car == tag.to_sym
     end
@@ -44,10 +42,15 @@ module Scheme
                 if procedure_call? last_exp
                     throw :tailcall, [last_exp, env]
                 elsif last_exp.car == :if
-                    return evaluate(last_exp, env)
+                    conseq_exp, conseq_env = eval_if_pred last_exp, env
+                    
+                    if procedure_call? conseq_exp
+                        throw :tailcall, [conseq_exp, conseq_env]
+                    end
                 end
             end
                 
+            # not tail call, evaluate normally
             return evaluate(last_exp, env)
         end
     end
@@ -60,168 +63,158 @@ module Scheme
         end
     end
 
-    @evaluation_handlers = []
-    @in_procedure = []
+    def self.eval_if_pred if_exp, env
+        predicate = if_exp.cdr.car
+        true_conseq = if_exp.cdr.cdr.car
 
-    # self evaluating
-    @evaluation_handlers.push([
-        lambda do |exp| 
+        if if_exp.cdr.cdr.cdr
+            false_conseq = if_exp.cdr.cdr.cdr.car
+        else
+            false_conseq = :nil
+        end
+
+        if evaluate(predicate, env)
+            return [true_conseq, env]
+        else
+            return [false_conseq, env]
+        end
+    end
+
+
+
+    self_eval = {
+        :pred => lambda do |exp| 
             [Numeric, String, TrueClass, FalseClass, NilClass].map do |type|
                 exp.is_a? type
             end.any?
         end,
 
-        lambda do |exp, env|
+        :eval => lambda do |exp, env|
             exp
         end
-    ])
+    }
 
-    # var lookup
-    @evaluation_handlers.push([
-        lambda do |exp|
+    var_lookup = {
+        :pred => lambda do |exp|
             exp.is_a? Symbol
         end,
 
-        lambda do |exp, env|
+        :eval => lambda do |exp, env|
             env.get(exp)
         end
-    ])
+    }
 
-    # quote
-    @evaluation_handlers.push([
-        lambda do |exp|
+    quotation = {
+        :pred => lambda do |exp|
             tagged_list?(exp, 'quote')
         end,
-        lambda do |exp, env|
+        :eval => lambda do |exp, env|
             exp.cdr.car
         end
-    ])
+    }
 
-    # begin
-    @evaluation_handlers.push([
-        lambda do |exp|
+    begin_exp = {
+        :pred => lambda do |exp|
             tagged_list?(exp, 'begin')
         end,
-        lambda do |exp, env|
+        :eval => lambda do |exp, env|
             evaluate_list(exp.cdr, env)
         end
-    ])
+    }
 
-    # define / set
-    @evaluation_handlers.push([
-        lambda do |exp|
+    define_or_set = {
+        :pred => lambda do |exp|
             tagged_list?(exp, 'set!') or tagged_list?(exp, 'define')
         end,
-        lambda do |exp, env|
+        :eval => lambda do |exp, env|
             variable = exp.cdr.car
             value = evaluate(exp.cdr.cdr.car, env)
 
             env.set(variable, value)
         end
-    ])
+    }
 
-    # if
-    @evaluation_handlers.push([
-        lambda do |exp|
+
+    if_exp = {
+        :pred => lambda do |exp|
             tagged_list?(exp, 'if')
         end,
-        lambda do |exp, env|
-            predicate = exp.cdr.car
-            true_conseq = exp.cdr.cdr.car
+        :eval => lambda do |exp, env|
+            conseq_exp, conseq_env = eval_if_pred exp, env
 
-            if exp.cdr.cdr.cdr
-                false_conseq = exp.cdr.cdr.cdr.car
-            else
-                false_conseq = :nil
-            end
-
-            if evaluate(predicate, env)
-                evaluate(true_conseq, env)
-            else
-                evaluate(false_conseq, env)
-            end
+            evaluate conseq_exp, conseq_env
         end
-    ])
+    }
 
-    # lambda!
-    @evaluation_handlers.push([
-        lambda do |exp|
+    lambda_exp = {
+        :pred => lambda do |exp|
             tagged_list?(exp, 'lambda')
         end,
-        lambda do |exp, env|
+        :eval => lambda do |exp, env|
             var_list = exp.cdr.car
             exps = exp.cdr.cdr
             
             Procedure.new(var_list, exps, env)
         end
-    ])
+    }
 
-    eval_app = lambda do |exp, env|
-            new_exp,new_env = catch :tailcall do
-                procedure_exp = exp.car
-                arg_exps = exp.cdr
-
-                # evaluate procedure
-                procedure = evaluate(procedure_exp, env)
-
-                # evaluate arguments left to right
-                arguments = values_list(arg_exps, env)
-
-                # apply
-                result = procedure.apply arguments
-
-                return result
-            end
-
-            return [new_exp, new_env]
-    end
-
-    # proc evaluation!
-    @evaluation_handlers.push([
-        lambda do |exp|
+    apply_proc = {
+        :pred => lambda do |exp|
             exp.is_a? Pair
         end,
-        lambda do |exp, env|
-            result = eval_app[exp, env]
+        :eval => lambda do |exp, env|
+
+            _eval_app = lambda do |exp, env|
+                    new_exp,new_env = catch :tailcall do
+                        procedure_exp = exp.car
+                        arg_exps = exp.cdr
+
+                        # evaluate procedure
+                        procedure = evaluate(procedure_exp, env)
+
+                        # evaluate arguments left to right
+                        arguments = values_list(arg_exps, env)
+
+                        # apply
+                        result = procedure.apply arguments
+
+                        return result
+                    end
+
+                    return [new_exp, new_env]
+            end
+
+            result = _eval_app[exp, env]
 
             while result.is_a? Array
-                result = eval_app[*result]
+                result = _eval_app[*result]
             end
 
             result
         end
-        #lambda do |exp, env|
-        #    evaluate_application = lambda do |exp, env|
-        #        procedure_exp = exp.car
-        #        arg_exps = exp.cdr
+    }
 
-        #        # evaluate procedure
-        #        procedure = evaluate(procedure_exp, env)
-
-        #        # evaluate arguments left to right
-        #        arguments = values_list(arg_exps, env)
-
-        #        # apply
-        #        result = procedure.apply arguments
-
-        #        return result
-        #    end
-
-        #    new_exp,new_env = catch :tailcall do
-        #        return evaluate_application[exp, env]
-        #    end
-
-        #    return evaluate_application[new_exp, new_env]
-        #end
-    ])
+    @evaluation_rules = [
+        self_eval,
+        var_lookup,
+        quotation,
+        begin_exp,
+        define_or_set,
+        if_exp,
+        lambda_exp,
+        apply_proc
+    ]
     
     public
 
     def self.evaluate(expression, env)
 
-        @evaluation_handlers.each do |pred, handler|
-            if pred[expression]
-                return handler[expression, env]
+        @evaluation_rules.each do |evaluation_rule|
+            evaluation_predicate = evaluation_rule[:pred]
+            evaluation_procedure = evaluation_rule[:eval]
+
+            if evaluation_predicate[expression]
+                return evaluation_procedure[expression, env]
             end
         end
 
