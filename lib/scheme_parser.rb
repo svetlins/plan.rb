@@ -2,8 +2,8 @@ require 'treetop'
 require 'lib/scheme_grammar'
 
 module Scheme
-    def self.parse(stuff)
-        SchemeGrammarParser.new.parse(stuff).value
+    def self.parse(code)
+        SchemeGrammarParser.new.parse(code).value
     end
 
     def self.clean_code(code)

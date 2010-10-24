@@ -7,6 +7,7 @@ module Scheme
             @car, @cdr = car, cdr
         end
 
+        # list related
         def map &block
             if @cdr
                 Pair.new(yield(@car), @cdr.map(&block))

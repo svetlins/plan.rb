@@ -8,7 +8,10 @@ class EvaluatorTests < Test::Unit::TestCase
     end
 
     def test_ll
-        list = Scheme::Pair.new(1, Scheme::Pair.new(2, Scheme::Pair.new(3, nil)))
+        list = Scheme::Pair.new(
+            1,
+            Scheme::Pair.new(2, Scheme::Pair.new(3, nil))
+        )
 
         assert_equal(1, list.car)
         assert_equal(2, list.cdr.car)
@@ -60,9 +63,23 @@ class EvaluatorTests < Test::Unit::TestCase
 
     def test_lambda
         assert_equal(42, Scheme::run("((lambda (x) x) 42)"))
-        assert_equal(1337, Scheme::run("(begin (define myproc (lambda (x) x)) (myproc 1337))"))
+        assert_equal(1337, Scheme::run("
+            (begin
+                (define 
+                    myproc 
+                    (lambda (x) x)) 
+                (myproc 1337))"
+            )
+        )
         # no args
-        assert_equal(1337, Scheme::run("(begin (define myproc (lambda () 1337)) (myproc))"))
+        assert_equal(1337, Scheme::run("
+            (begin 
+                (define 
+                    myproc 
+                    (lambda () 1337))
+                (myproc))"
+            )
+        )
     end
 
     def test_operations
@@ -72,7 +89,16 @@ class EvaluatorTests < Test::Unit::TestCase
         assert_equal(8, Scheme::run("(* 2 (* 2 2))"))
         assert_equal(true, Scheme::run("(= 1 1)"))
         assert_equal(false, Scheme::run("(= 1 2)"))
-        assert_equal(3628800, Scheme::run("(begin (define fact (lambda (n) (if (= n 1) 1 (* n (fact (- n 1)))))) (fact 10))"))
+        assert_equal(
+            3628800,
+            Scheme::run("
+                (begin
+                    (define 
+                        fact
+                        (lambda (n) (if (= n 1) 1 (* n (fact (- n 1))))))
+                    (fact 10))"
+            )
+        )
     end
 
     def test_old
@@ -92,7 +118,10 @@ class EvaluatorTests < Test::Unit::TestCase
     def test_car_cdr
         assert_equal(1, Scheme::run("(car (cons 1 2))"))
         assert_equal(2, Scheme::run("(cdr (cons 1 2))"))
-        assert_equal(3, Scheme::run("(car (cdr (cdr (cons 1 (cons 2 (cons 3 nil))))))"))
+        assert_equal(3, Scheme::run("
+            (car (cdr (cdr (cons 1 (cons 2 (cons 3 nil))))))"
+            )
+        )
     end
 
     def test_null
