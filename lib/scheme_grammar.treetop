@@ -24,7 +24,7 @@ grammar SchemeGrammar
     end
 
     rule symbol
-        [a-z0-9\!\+\=\?\*\-]+ {
+        [a-z0-9\!\+\=\?\*\-/]+ {
             def value
                 text_value.to_sym
             end

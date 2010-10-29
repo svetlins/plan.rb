@@ -37,6 +37,9 @@ class TestSchemeParser < Test::Unit::TestCase
         assert_equal(true, Scheme::parse("(#t #f)").car)
         assert_equal(false, Scheme::parse("(#t #f)").cdr.car)
 
+        assert_equal(:a, Scheme::parse('a'))
+        assert_equal(:'call/cc', Scheme::parse("call/cc"))
+
         assert_equal(4, Scheme::parse("(4 symbol other 5)").car)
         assert_equal(:symbol, Scheme::parse("(symbol symbol)").car)
         assert_equal(:abv, Scheme::parse("(quote abv)").cdr.car)
