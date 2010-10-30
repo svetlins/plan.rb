@@ -158,6 +158,48 @@ module Scheme
         end
     }
 
+    call_cc = {
+        :pred => lambda do |exp|
+            tagged_list? exp, :'call/cc'
+        end,
+        :eval => lambda do |exp, env|
+            procedure = evaluate(exp.cdr.car, env)
+
+            _obj = Object.new
+            position = _obj.hash
+            p ['start', position]
+            
+            escape = NativeProcedure.new(lambda do |_|
+                puts 'called escape', position
+                result = _.car
+                throw :escape, [position, result]
+            end)
+
+            result = nil
+
+            escaped = catch :escape do
+                result = procedure.apply(
+                    Pair.new(escape, :nil)
+                )
+
+                nil
+            end
+
+            if escaped
+                pos, result = escaped
+                p [position, pos, position != pos]
+
+                if pos != position
+                    #not for us, pass up
+                    puts 'passing up'
+                    throw :escape, escaped
+                end
+            end
+
+            return result
+        end
+    }
+
     apply_proc = {
         :pred => lambda do |exp|
             exp.is_a? Pair
@@ -202,7 +244,8 @@ module Scheme
         define_or_set,
         if_exp,
         lambda_exp,
-        apply_proc
+        call_cc,
+        apply_proc,
     ]
     
     public
