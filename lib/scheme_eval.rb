@@ -167,10 +167,10 @@ module Scheme
 
 
             # prepare escape procedure for current callcc
-            escape_value = nil
+            this_escape_value = nil
 
-            escape = NativeProcedure.new(lambda do |_|
-                escape_value = _.car
+            escape = NativeProcedure.new(lambda do |escape_value|
+                this_escape_value = escape_value
                 throw :escape, escape_value
             end)
 
@@ -182,7 +182,7 @@ module Scheme
                 )
             end
 
-            if escaped.equal? escape_value
+            if escaped.equal? this_escape_value
                 return escaped
             else
                 #not for us, pass up

@@ -50,7 +50,43 @@ class TestLinkedLists < Test::Unit::TestCase
             )
         )
 
-        assert_equal([1, [42, 69], 3], array)
+        assert_equal([1, Scheme::Pair.new(42, Scheme::Pair.new(69, nil)), 3], array)
 
+        assert_equal([1], Scheme::make_array(Scheme::Pair.new(1,nil)))
+
+        assert_equal(
+            [Scheme::Pair.new(1,2)],
+            Scheme::make_array(
+                Scheme::Pair.new(Scheme::Pair.new(1,2), nil)
+            )
+        )
+    end
+
+    def test_transform
+        array_to_list = lambda do |array|
+            assert_equal array, Scheme::make_array(Scheme::make_linked_list(array))
+        end
+
+        array_to_list[[1,2,3]]
+        array_to_list[[]]
+        array_to_list[[1]]
+
+        #disabled - undefined
+        #array_to_list[[1,2,3,[4,5,6]]]
+        #array_to_list[[1,2,3,[4,5,6],7,8]]
+        #array_to_list[[1,2,3,[4,5,6],Scheme::Pair.new(1,2),8]]
+        array_to_list[[Scheme::Pair.new(1,2), Scheme::Pair.new(42,69)]]
+
+        list_to_array = lambda do |list|
+            assert_equal list, Scheme::make_linked_list(Scheme::make_array(list))
+        end
+
+        list_to_array[
+            Scheme::Pair.new(1,Scheme::Pair.new(2,Scheme::Pair.new(3, nil)))
+        ]
+
+        list_to_array[
+            Scheme::Pair.new(1,nil)
+        ]
     end
 end

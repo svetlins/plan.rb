@@ -4,47 +4,47 @@ module Scheme
         #populate global environment with built-in procedures
         @global_env.set(
             :+,
-            NativeProcedure.new(lambda { |_| _.car + _.cdr.car })
+            NativeProcedure.new(lambda { |a,b| a + b })
         )
 
         @global_env.set(
             :*,
-            NativeProcedure.new(lambda { |_| _.car * _.cdr.car })
+            NativeProcedure.new(lambda { |a,b| a * b })
         )
 
         @global_env.set(
             :-,
-            NativeProcedure.new(lambda { |_| _.car - _.cdr.car })
+            NativeProcedure.new(lambda { |a,b| a - b })
         )
 
         @global_env.set(
             :'=',
-            NativeProcedure.new(lambda { |_| _.car == _.cdr.car })
+            NativeProcedure.new(lambda { |a,b| a == b })
         )
 
         @global_env.set(
             :cons,
-            NativeProcedure.new(lambda { |_| Pair.new(_.car, _.cdr.car) })
+            NativeProcedure.new(lambda { |a, b| Pair.new(a, b) })
         )
 
         @global_env.set(
             :car,
-            NativeProcedure.new(lambda { |_| _.car.car })
+            NativeProcedure.new(lambda { |pair| pair.car })
         )
 
         @global_env.set(
             :cdr,
-            NativeProcedure.new(lambda { |_| _.car.cdr })
+            NativeProcedure.new(lambda { |pair| pair.cdr })
         )
 
         @global_env.set(
             :null?,
-            NativeProcedure.new(lambda { |_| _.car.nil? })
+            NativeProcedure.new(lambda { |a| a.nil? })
         )
 
         @global_env.set(
             :display,
-            NativeProcedure.new(lambda { |_| puts _.car.to_s })
+            NativeProcedure.new(lambda { |a| puts a.to_s })
         )
         
 end

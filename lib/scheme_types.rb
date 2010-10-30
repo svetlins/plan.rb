@@ -42,6 +42,14 @@ module Scheme
                 return '(' + @car.to_s + ' . ' + @cdr.to_s + ')'
             end
         end
+
+        def ==(other)
+            if other.is_a? Pair
+                return (@car == other.car) && (@cdr == other.cdr)
+            else
+                return false
+            end
+        end
     end
 
     class Procedure
@@ -67,7 +75,8 @@ module Scheme
         end
 
         def apply args, proc_ref = nil
-            @procedure[args]
+            args_array = Scheme::make_array args
+            return @procedure[*args_array]
         end
     end
 
@@ -89,17 +98,29 @@ module Scheme
         _make_linked_list_iter(nil, list.reverse)
     end
 
-    def self.make_array(linked_list)
+    def self.make_array_deep(linked_list)
         if linked_list
             head, rest = linked_list.car, linked_list.cdr
 
             if head.is_a? Pair
-                head = make_array head
+                if head.cdr.is_a? Pair or head.cdr == nil
+                    head = make_array head
+                end
             end
 
             rest = make_array rest
 
             return [head] + rest
+        else
+            return []
+        end
+    end
+
+    def self.make_array(linked_list)
+        if linked_list
+            head, rest = linked_list.car, linked_list.cdr
+
+            return [linked_list.car] + make_array(rest)
         else
             return []
         end
