@@ -88,4 +88,20 @@ module Scheme
     def self.make_linked_list(list)
         _make_linked_list_iter(nil, list.reverse)
     end
+
+    def self.make_array(linked_list)
+        if linked_list
+            head, rest = linked_list.car, linked_list.cdr
+
+            if head.is_a? Pair
+                head = make_array head
+            end
+
+            rest = make_array rest
+
+            return [head] + rest
+        else
+            return []
+        end
+    end
 end
