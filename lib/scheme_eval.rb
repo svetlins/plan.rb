@@ -165,15 +165,13 @@ module Scheme
         :eval => lambda do |exp, env|
             procedure = evaluate(exp.cdr.car, env)
 
-            _obj = Object.new
-            position = _obj.hash
-            p ['start', position]
-            
+            escape_value = nil
+
             escape = NativeProcedure.new(lambda do |_|
-                puts 'called escape', position
-                result = _.car
-                throw :escape, [position, result]
+                escape_value = _.car
+                throw :escape, escape_value
             end)
+
 
             result = nil
 
@@ -186,12 +184,10 @@ module Scheme
             end
 
             if escaped
-                pos, result = escaped
-                p [position, pos, position != pos]
+                result = escaped
 
-                if pos != position
+                if not result.equal? escape_value
                     #not for us, pass up
-                    puts 'passing up'
                     throw :escape, escaped
                 end
             end
@@ -232,7 +228,7 @@ module Scheme
                 result = _eval_app[*result]
             end
 
-            result
+            return result
         end
     }
 
