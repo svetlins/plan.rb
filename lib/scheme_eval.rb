@@ -165,6 +165,8 @@ module Scheme
         :eval => lambda do |exp, env|
             procedure = evaluate(exp.cdr.car, env)
 
+
+            # prepare escape procedure for current callcc
             escape_value = nil
 
             escape = NativeProcedure.new(lambda do |_|
@@ -173,26 +175,20 @@ module Scheme
             end)
 
 
-            result = nil
-
+            # apply procedure on prepared escaped procedure
             escaped = catch :escape do
-                result = procedure.apply(
+                return procedure.apply(
                     Pair.new(escape, :nil)
                 )
-
-                nil
             end
 
-            if escaped
-                result = escaped
-
-                if not result.equal? escape_value
-                    #not for us, pass up
-                    throw :escape, escaped
-                end
+            if escaped.equal? escape_value
+                return escaped
+            else
+                #not for us, pass up
+                throw :escape, escaped
             end
-
-            return result
+            
         end
     }
 
