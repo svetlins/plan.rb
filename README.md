@@ -17,11 +17,13 @@ ruby (tested with 1.9.2) and gems:
 TRY IT
 ------
 
-For real REPL experience, grab *rlwrap* and run:
+For bearable REPL experience, grab *rlwrap* and run:
 
     $ rlwrap ./run_repl.rb
 
 It is a tedious experience without *rlwrap* 
+
+Also, multiline input is not handled very well
 
 COOL FEATURES
 -------------
