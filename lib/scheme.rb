@@ -27,6 +27,9 @@ module Scheme
             print ">"
             # read 
             code = readline
+            while code.count('(') != code.count(')') do
+                code += readline
+            end
 
             # eval
             result = run code
