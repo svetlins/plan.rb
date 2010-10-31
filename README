@@ -1,9 +1,0 @@
-Interpreter for a small subset of Scheme written in ruby
-
-Tested with ruby 1.9.2
-
-To try out, grab rlwrap and run:
-
-    $ rlwrap ./run_repl.rb
-
-TODO: write README :)
