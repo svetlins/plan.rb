@@ -74,7 +74,7 @@ module Scheme
             @procedure = procedure
         end
 
-        def apply args, proc_ref = nil
+        def apply args
             args_array = Scheme::make_array args
             return @procedure[*args_array]
         end
