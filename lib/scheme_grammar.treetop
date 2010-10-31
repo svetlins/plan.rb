@@ -32,7 +32,7 @@ grammar SchemeGrammar
     end
 
     rule list
-        '(' object (' '+ object)* ')' {
+        '(' object (' '+ object)* ' '* ')' {
             def value
                 Scheme.make_linked_list(
                     [elements[1].value] + elements[2].elements.map do |e|
