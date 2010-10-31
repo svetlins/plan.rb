@@ -7,6 +7,10 @@ module Scheme
     end
 
     def self.clean_code(code)
+        while code.count("\n") > 0
+            code.sub!("\n", ' ')
+        end
+
         cleaned_code = code.strip.sub(/\s{2,}/, ' ')
         while cleaned_code != code
             code = cleaned_code
