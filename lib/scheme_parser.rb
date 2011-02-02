@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'treetop'
 require 'lib/scheme_grammar'
 
