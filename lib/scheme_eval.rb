@@ -199,7 +199,8 @@ module Scheme
         :eval => lambda do |exp, env|
 
             _eval_app = lambda do |exp, env|
-                    new_exp,new_env = catch :tailcall do
+
+                    result = catch :tailcall do
                         procedure_exp = exp.car
                         arg_exps = exp.cdr
 
@@ -210,12 +211,9 @@ module Scheme
                         arguments = values_list(arg_exps, env)
 
                         # apply
-                        result = procedure.apply arguments
-
-                        return result
+                        procedure.apply arguments
                     end
 
-                    return [new_exp, new_env]
             end
 
             result = _eval_app[exp, env]
@@ -243,13 +241,13 @@ module Scheme
     public
 
     def self.evaluate(expression, env)
-
         @evaluation_rules.each do |evaluation_rule|
             evaluation_predicate = evaluation_rule[:pred]
             evaluation_procedure = evaluation_rule[:eval]
 
             if evaluation_predicate[expression]
-                return evaluation_procedure[expression, env]
+                result = evaluation_procedure[expression, env]
+                return result
             end
         end
 
