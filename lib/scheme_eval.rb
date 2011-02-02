@@ -171,22 +171,29 @@ module Scheme
 
             escape = NativeProcedure.new(lambda do |escape_value|
                 this_escape_value = escape_value
-                throw :escape, escape_value
+                throw :escape, {:origin => :escape_value, :value => escape_value}
             end)
 
 
             # apply procedure on prepared escaped procedure
-            escaped = catch :escape do
-                return procedure.apply(
+            result = catch :escape do
+                result = procedure.apply(
                     Pair.new(escape, :nil)
                 )
+
+                {:origin => :return_value, :value => result}
             end
 
-            if escaped.equal? this_escape_value
-                return escaped
-            else
-                #not for us, pass up
-                throw :escape, escaped
+            case result[:origin]
+            when :escape_value
+              if result[:value].equal? this_escape_value
+                  return result[:value]
+              else
+                  #not for us, pass up
+                  throw :escape, result
+              end
+            when :return_value
+              return result[:value]
             end
             
         end
