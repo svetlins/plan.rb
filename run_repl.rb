@@ -7,21 +7,9 @@ require 'lib/scheme'
 def draw_welcome_note logo
     width = logo.split("\n").max { |x,y| x.length - y.length }.length
 
-    # puts '-' * width
     puts logo.strip
     puts '-' * width
 end
-
-logo = "
-_____________________________________________
-                                             
-             /                            /  
-------__----/-----__-----__-------)__----/__-
-    /   )  /    /   )  /   )     /   )  /   )
-___/___/__/____(___(__/___/__o__/______(___/_
-  /                                          
- /                                           
-"
 
 logo = "
      |                    |    
