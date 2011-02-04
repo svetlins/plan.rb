@@ -2,9 +2,15 @@ require 'rubygems'
 require 'treetop'
 require 'lib/scheme_grammar'
 
+class SchemeInterpreter
+  def parse(code)
+    SchemeGrammarParser.new.parse(code).value
+  end
+end
+
 module Scheme
     def self.parse(code)
-        SchemeGrammarParser.new.parse(code).value
+      SchemeParser.new.parse(code)
     end
 
     def self.clean_code(code)
