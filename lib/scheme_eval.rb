@@ -70,7 +70,7 @@ module Scheme
         if if_exp.cdr.cdr.cdr
             false_conseq = if_exp.cdr.cdr.cdr.car
         else
-            false_conseq = :nil
+            false_conseq = nil
         end
 
         if evaluate(predicate, env)
