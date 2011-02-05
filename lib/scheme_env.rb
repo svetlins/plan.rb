@@ -10,7 +10,7 @@ module Scheme
         def get(key)
           result = @bindings[key] || (@parent && @parent.get(key))
 
-          raise NameError, "Unexistent binding" if result.nil?
+          raise NameError, "Unexistent binding: #{key}" if result.nil?
 
           result
         end

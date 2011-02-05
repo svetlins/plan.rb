@@ -18,9 +18,10 @@ describe Scheme::Environment do
     end
 
     it "raises on unexistent binding" do
+      var_name = 'the-truth-about-world'
       lambda do
-        @env.get('the-truth-about-world')
-      end.should raise_error(NameError, "Unexistent binding")
+        @env.get(var_name)
+      end.should raise_error(NameError, "Unexistent binding: #{var_name}")
     end
 
     it "can be extended" do
