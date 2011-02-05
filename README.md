@@ -9,9 +9,10 @@ Interpreter for a small subset of Scheme written in ruby
 
 REQUIREMENTS
 ------------
-ruby (tested with 1.9.2) and gems:
+ruby (tested with 1.8.7) and gems:
 
 *   treetop
+*   rspec
 
 
 TRY IT
@@ -25,10 +26,10 @@ It is a tedious experience without *rlwrap*
 
 Also, multiline input is not handled very well
 
-COOL FEATURES
+SOME FEATURES
 -------------
 
-It has *call/cc* and tail call elimination
+It has *call/cc* and a basic infrastructure for tail call elimination
 
 WHAT'S MISSING
 --------------
