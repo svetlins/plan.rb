@@ -71,10 +71,6 @@ class TestLinkedLists < Test::Unit::TestCase
         array_to_list[[]]
         array_to_list[[1]]
 
-        #disabled - undefined
-        #array_to_list[[1,2,3,[4,5,6]]]
-        #array_to_list[[1,2,3,[4,5,6],7,8]]
-        #array_to_list[[1,2,3,[4,5,6],Scheme::Pair.new(1,2),8]]
         array_to_list[[Scheme::Pair.new(1,2), Scheme::Pair.new(42,69)]]
 
         list_to_array = lambda do |list|
