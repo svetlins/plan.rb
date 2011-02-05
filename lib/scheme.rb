@@ -24,7 +24,7 @@ module Scheme
 
     def self.run_repl
         while true
-            print ">"
+            print "> "
             # read 
             code = readline
             while code.count('(') != code.count(')') do
@@ -35,7 +35,7 @@ module Scheme
             result = run code
 
             # print
-            print '=>'
+            print '--> '
             puts result.to_scheme
 
             #loop
