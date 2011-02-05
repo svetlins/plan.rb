@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
-libdir = `pwd`.strip
-$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 
-require 'lib/scheme'
+require 'scheme'
 
 def draw_welcome_note logo
     width = logo.split("\n").max { |x,y| x.length - y.length }.length

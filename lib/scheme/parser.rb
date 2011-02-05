@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'treetop'
-require 'lib/scheme_grammar'
+require 'scheme/grammar'
 
 class SchemeInterpreter
   def parse(code)
