@@ -8,7 +8,11 @@ module Scheme
         end
 
         def get(key)
-            @bindings[key] or (@parent and @parent.get(key))
+          result = @bindings[key] || (@parent && @parent.get(key))
+
+          raise NameError, "Unexistent binding" if result.nil?
+
+          result
         end
 
         def set(key, val)
