@@ -1,16 +1,24 @@
 grammar SchemeGrammar
     rule object
-        list / number / string / nil / other_nil / true / false / symbol / '~' {
+        list / float / integer / string / nil / other_nil / true / false / symbol / '~' {
             def value
                 elements[0].value
             end
         }
     end
 
-    rule number
+    rule integer
         [\+\-]? [0-9]+ {
             def value
                 text_value.to_i
+            end
+        }
+    end
+
+    rule float
+        [\+\-]? [0-9]+ "." [0-9]+ {
+            def value
+                text_value.to_f
             end
         }
     end

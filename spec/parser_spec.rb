@@ -10,7 +10,7 @@ describe SchemeInterpreter do
       scheme.parse code
     end
 
-    it "parses numbers" do
+    it "parses integers" do
       numbers = [42, 0, 1, -42, 69, 999999, -999999]
 
       numbers.each do |number|
@@ -18,6 +18,14 @@ describe SchemeInterpreter do
       end
       
       parse("+69").should == 69
+    end
+
+    it "parses floats" do
+      floats = ["0.0", "1.0", "-1.0", "42.5556"]
+
+      floats.each do |float|
+        parse(float).should == float.to_f
+      end
     end
 
     it "parses strings" do
@@ -30,6 +38,8 @@ describe SchemeInterpreter do
 
     it "parses lists" do
       parse("(1 2 3)").car.should == 1
+
+      parse("(1.0 2.0 3.0)").car.should == 1.0
 
       parse("(1 2 3)").cdr.car.should == 2
 
