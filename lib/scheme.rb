@@ -36,26 +36,39 @@ module Scheme
 
             # print
             print '=>'
-            puts result.to_s
+            puts result.to_scheme
 
             #loop
         end
     end
 end
 
-# some monkey patching
-# I don't care what you think about it :)
-# I've been too long into Python, now I appreciate the possibility
 class NilClass
-    def to_s
+    def to_scheme
         "nil"
     end
 end
 
-# maybe this is a little bit too much
 class String
-    alias real_to_s to_s
-    def to_s
-        '"' + real_to_s + '"'
+    def to_scheme
+        '"' + to_s + '"'
     end
+end
+
+class TrueClass
+  def to_scheme
+    '#t'
+  end
+end
+
+class FalseClass
+  def to_scheme
+    '#f'
+  end
+end
+
+class Object
+  def to_scheme
+    to_s
+  end
 end
