@@ -10,7 +10,7 @@ end
 
 module Scheme
     def self.parse(code)
-      SchemeParser.new.parse(code)
+      SchemeInterpreter.new.parse(code)
     end
 
     def self.clean_code(code)
