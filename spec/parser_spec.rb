@@ -71,6 +71,12 @@ describe SchemeInterpreter do
       parse("(symbol symbol)").car.should == :symbol
       parse("(quote abv)").cdr.car.should == :abv
 
+      parse("/").should == :/
+      parse("//").should == :"//"
+      parse("%").should == :"%"
+
+      parse("(% 22 3)").car.should == :"%"
+
       parse("(null? nil)").car.should == :null?
       parse("(hyphenated-stuff nil)").car.should == :'hyphenated-stuff'
 
