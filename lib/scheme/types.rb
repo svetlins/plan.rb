@@ -132,3 +132,33 @@ module Scheme
         end
     end
 end
+
+class NilClass
+    def to_scheme
+        "nil"
+    end
+end
+
+class String
+    def to_scheme
+        '"' + to_s + '"'
+    end
+end
+
+class TrueClass
+  def to_scheme
+    '#t'
+  end
+end
+
+class FalseClass
+  def to_scheme
+    '#f'
+  end
+end
+
+class Object
+  def to_scheme
+    to_s
+  end
+end
