@@ -16,7 +16,7 @@ module Scheme
             current_env = @global_env
         end
 
-        return evaluate(ast, current_env)
+        return Exp.new(ast).evaluate current_env
     end
 
     def self.run_repl

@@ -64,7 +64,7 @@ module Scheme
                 end
             end
 
-            Scheme::evaluate_proc_body @exps, @env.extend(bindings)
+            Exp.new(@exps).evaluate_proc_body @env.extend(bindings)
         end
 
         def to_scheme
@@ -82,7 +82,7 @@ module Scheme
 
         def apply args
             args_array = Scheme::make_array args
-            return @procedure[*args_array]
+            return @procedure.call(*args_array)
         end
     end
 
