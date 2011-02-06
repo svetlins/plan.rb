@@ -66,6 +66,13 @@ module Scheme
 
             Scheme::evaluate_proc_body @exps, @env.extend(bindings)
         end
+
+        def to_scheme
+          p = Scheme.make_array(@params).map &:to_scheme
+          e = Scheme.make_array(@exps).map &:to_scheme
+
+          "(lambda (#{p.join}) #{e.join})"
+        end
     end
 
     class NativeProcedure

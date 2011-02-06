@@ -48,4 +48,10 @@ describe "to_scheme" do
       run_and_render('(cons (+ 33 66) "str")').should == '(99 . "str")'
     end
   end
+
+  context "procs" do
+    it "renders procs" do
+      run_and_render("(lambda (x) x)").should == "(lambda (x) x)"
+    end
+  end
 end
