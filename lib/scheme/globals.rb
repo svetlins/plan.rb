@@ -18,6 +18,21 @@ module Scheme
         )
 
         @global_env.set(
+            :/,
+            NativeProcedure.new(lambda { |a,b| a / (b + 0.0) })
+        )
+
+        @global_env.set(
+            :"//",
+            NativeProcedure.new(lambda { |a,b| a / b })
+        )
+
+        @global_env.set(
+            :"%",
+            NativeProcedure.new(lambda { |a,b| a % b })
+        )
+
+        @global_env.set(
             :'=',
             NativeProcedure.new(lambda { |a,b| a == b })
         )
@@ -44,7 +59,15 @@ module Scheme
 
         @global_env.set(
             :display,
-            NativeProcedure.new(lambda { |a| puts a.to_s })
+            NativeProcedure.new(lambda { |a| puts a.to_scheme })
+        )
+
+        @global_env.set(
+            :bye,
+            NativeProcedure.new(lambda do
+              puts "Bye!"
+              exit(0)
+            end)
         )
         
 end

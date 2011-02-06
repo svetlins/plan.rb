@@ -106,6 +106,15 @@ describe Scheme do
         run("(- 42 1)").should == 41
         run("(- -42 1)").should == -43
         run("(* 2 (* 2 2))").should == 8
+
+        run("(+ 1 0.0)").should == 1.0
+        run("(* 1 0.0)").should == 0.0
+        run("(- -42 2.5)").should == -44.5
+
+        run("(/ 2 4)").should == 0.5
+        run("(/ 3 9)").should == 1 / 3.0
+        run("(// 7 3)").should == 7 / 3
+        run("(% 7 3)").should == 7 % 3
       end
 
       it "evaluates calls to compare operations" do
