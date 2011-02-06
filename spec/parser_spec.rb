@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe SchemeInterpreter do
+describe Scheme::Parser do
   describe "#parse" do
     let(:scheme) do
-      SchemeInterpreter.new
+      Scheme::Parser.new
     end
 
     def parse(code)
@@ -38,6 +38,12 @@ describe SchemeInterpreter do
 
     it "parses lists" do
       parse("(1 2 3)").car.should == 1
+
+      parse("(1    2    3)").car.should == 1
+      parse("(1 2 3    )").car.should == 1
+      parse("(    1 2 3)").car.should == 1
+      parse("(    1\n2\n3)").car.should == 1
+      parse("(    1\n 2 \n 3  \n)").car.should == 1
 
       parse("(1.0 2.0 3.0)").car.should == 1.0
 

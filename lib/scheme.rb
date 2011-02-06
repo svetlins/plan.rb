@@ -6,11 +6,8 @@ require 'scheme/evaluator'
 
 module Scheme
     def self.run(code, env=nil)
-        # clean code
-        cleaned_code = clean_code code
-
         # parse code
-        ast = parse cleaned_code
+        ast = Parser.new.parse code
 
         # apply any given bindings to global env
         if env

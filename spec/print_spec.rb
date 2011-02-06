@@ -6,7 +6,7 @@ describe "to_scheme" do
   end
 
   def parse_and_render code
-    Scheme.parse(code).to_scheme
+    Scheme::Parser.new.parse(code).to_scheme
   end
   
   context "atoms" do
