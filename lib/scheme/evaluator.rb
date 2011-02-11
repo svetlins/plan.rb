@@ -26,15 +26,15 @@ module Scheme
 
     def evaluate_list(env)
       if @body.cdr
-        Exp.new(@body.car).evaluate(env)
-        Exp.new(@body.cdr).evaluate_list(env)
+        head.evaluate(env)
+        tail.evaluate_list(env)
       else
-        Exp.new(@body.car).evaluate(env)
+        head.evaluate(env)
       end
     end
 
     def evaluate_begin(env)
-      Exp.new(@body.cdr).evaluate_list(env)
+      tail.evaluate_list(env)
     end
 
     def procedure_call?
@@ -48,13 +48,13 @@ module Scheme
         :*,
         :'=',
       ]
-      @body.is_a? Pair and not not_relevant.member? @body.car
+      @body.is_a? Pair and not not_relevant.include? @body.car
     end
 
     def evaluate_proc_body(env)
       if @body.cdr
-        Exp.new(@body.car).evaluate(env)
-        Exp.new(@body.cdr).evaluate_proc_body(env)
+        head.evaluate(env)
+        tail.evaluate_proc_body(env)
       else
         # this is the last expression
         # it is in else because it's value is the value
@@ -82,9 +82,7 @@ module Scheme
 
     def values_list(env)
       if @body
-        Pair.new(Exp.new(@body.car).evaluate(env), Exp.new(@body.cdr).values_list(env))
-      else
-        nil
+        Pair.new(head.evaluate(env), tail.values_list(env))
       end
     end
 
@@ -103,6 +101,14 @@ module Scheme
       else
         return [false_conseq, env]
       end
+    end
+
+    def head
+      Exp.new(@body.car)
+    end
+
+    def tail
+      Exp.new(@body.cdr)
     end
   end
 end
