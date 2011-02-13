@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'treetop'
-require 'scheme/grammar'
+require 'plan/grammar'
 
 module Scheme
   class Parser

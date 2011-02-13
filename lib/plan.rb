@@ -1,8 +1,8 @@
-require 'scheme/types'
-require 'scheme/parser'
-require 'scheme/environment'
-require 'scheme/globals'
-require 'scheme/expression'
+require 'plan/types'
+require 'plan/parser'
+require 'plan/environment'
+require 'plan/globals'
+require 'plan/expression'
 
 module Scheme
     def self.run(code, env=nil)

@@ -1,1 +1,1 @@
-require 'scheme'
+require 'plan'
