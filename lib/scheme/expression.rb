@@ -17,7 +17,7 @@ module Scheme
         end
       end
 
-      raise "Cannot evaluate %s" % expression
+      raise "Cannot evaluate #{expression}"
     end
 
     def tagged_list?(tag)
