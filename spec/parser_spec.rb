@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Scheme::Parser do
+describe Plan::Parser do
   describe "#parse" do
-    let(:scheme) do
-      Scheme::Parser.new
+    let(:parser) do
+      Plan::Parser.new
     end
 
     def parse(code)
-      scheme.parse code
+      parser.parse code
     end
 
     it "parses integers" do
@@ -86,7 +86,6 @@ describe Scheme::Parser do
       parse("(null? nil)").car.should == :null?
       parse("(hyphenated-stuff nil)").car.should == :'hyphenated-stuff'
 
-      #assert_equal(:a, Scheme::parse('(a)').car)
       parse("(a)").car == :a
 
       parse("nil").should be_nil
@@ -96,7 +95,7 @@ describe Scheme::Parser do
       parse("(cons 1 (cons 1 2))").cdr.cdr.car.car.should == :cons
       parse("((cons 1 2) (cons 1 2))").cdr.car.car.should == :cons
 
-      parse("(begin (define proc1 (lambda (x) (define proc2 (lambda (y) (+ x y))) (proc2 7))) (proc1 10))").should be_kind_of(Scheme::Pair)
+      parse("(begin (define proc1 (lambda (x) (define proc2 (lambda (y) (+ x y))) (proc2 7))) (proc1 10))").should be_kind_of(Plan::Pair)
     end
 
   end

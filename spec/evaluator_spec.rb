@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Scheme do
+describe Plan do
   describe "#run" do
     def run(code, env = nil)
-      Scheme.run code, env
+      Plan.run code, env
     end
     context "self evaluating" do
       it "evaluates numbers" do

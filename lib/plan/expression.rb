@@ -1,4 +1,4 @@
-module Scheme
+module Plan
   class Exp
     #TODO: remove
     attr_reader :body
@@ -8,7 +8,7 @@ module Scheme
     end
 
     def evaluate(env)
-      Scheme.evaluation_rules.each do |evaluation_rule|
+      Plan.evaluation_rules.each do |evaluation_rule|
         evaluation_predicate = evaluation_rule[:pred]
         evaluation_procedure = evaluation_rule[:eval]
 
@@ -113,7 +113,7 @@ module Scheme
   end
 end
 
-module Scheme
+module Plan
 
   @apply_proc = {
     :pred => lambda do |exp|

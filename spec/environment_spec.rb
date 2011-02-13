@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Scheme::Environment do
+describe Plan::Environment do
   context "in general" do
     before(:each) do
-      @env = Scheme::Environment.new
+      @env = Plan::Environment.new
     end
     it "creates and reads bindings with get and set" do
       @env.set('a', 2)

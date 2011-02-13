@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Scheme do
+describe Plan do
   describe "#run" do
     def run(code)
-      Scheme.run(code)
+      Plan.run(code)
     end
 
     context "continuation" do

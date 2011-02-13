@@ -2,7 +2,7 @@ require 'rubygems'
 require 'treetop'
 require 'plan/grammar'
 
-module Scheme
+module Plan
   class Parser
     def parse(code)
       SchemeGrammarParser.new.parse(clean code).value

@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Scheme::Exp do
+describe Plan::Exp do
   def make_exp(code)
-    ast = Scheme::Parser.new.parse code
-    Scheme::Exp.new ast
+    ast = Plan::Parser.new.parse code
+    Plan::Exp.new ast
   end
 
   describe "#tagged_list?" do

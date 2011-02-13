@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe "to_scheme" do
   def run_and_render(code, env=nil)
-    Scheme.run(code, env).to_scheme
+    Plan.run(code, env).to_scheme
   end
 
   def parse_and_render code
-    Scheme::Parser.new.parse(code).to_scheme
+    Plan::Parser.new.parse(code).to_scheme
   end
   
   context "atoms" do

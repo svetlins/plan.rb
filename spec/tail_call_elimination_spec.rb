@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Scheme do
+describe Plan do
   describe "#run" do
     context "tail call elimination" do
       def run(code)
-        Scheme.run code
+        Plan.run code
       end
 
       it "makes possible arbitrary deep call stacks for tail calling procs" do

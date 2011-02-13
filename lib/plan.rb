@@ -4,7 +4,7 @@ require 'plan/environment'
 require 'plan/globals'
 require 'plan/expression'
 
-module Scheme
+module Plan
     def self.run(code, env=nil)
         # parse code
         ast = Parser.new.parse code
@@ -19,7 +19,7 @@ module Scheme
         return Exp.new(ast).evaluate current_env
     end
 
-    def self.run_repl
+    def self.repl
         while true
             begin
               print "> "
