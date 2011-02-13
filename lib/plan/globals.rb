@@ -65,8 +65,7 @@ module Plan
   @global_env.set(
     :bye,
     NativeProcedure.new(lambda do
-    puts "Bye!"
-    exit(0)
+      Plan.shutdown
     end)
   )
 

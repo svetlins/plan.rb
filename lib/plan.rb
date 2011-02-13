@@ -19,6 +19,11 @@ module Plan
         return Exp.new(ast).evaluate current_env
     end
 
+    def self.shutdown
+      puts 'Bye!'
+      exit(0)
+    end
+
     def self.repl
         while true
             begin
@@ -37,6 +42,11 @@ module Plan
               puts result.plan_inspect
 
               #loop
+            rescue Interrupt
+              puts
+              puts 'keyboard interrupt'
+            rescue EOFError
+              shutdown
             rescue StandardError => e
               puts "!-> #{e}"
             end
