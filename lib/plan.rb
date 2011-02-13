@@ -34,7 +34,7 @@ module Plan
 
               # print
               print '--> '
-              puts result.to_scheme
+              puts result.plan_inspect
 
               #loop
             rescue StandardError => e

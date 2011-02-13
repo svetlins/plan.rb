@@ -5,7 +5,7 @@ require 'plan/grammar'
 module Plan
   class Parser
     def parse(code)
-      SchemeGrammarParser.new.parse(clean code).value
+      PlanTreetopParser.new.parse(clean code).value
     end
 
     def clean(code)

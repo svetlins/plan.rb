@@ -1,4 +1,4 @@
-grammar SchemeGrammar
+grammar PlanTreetop
     rule object
         list / float / integer / string / nil / other_nil / true / false / symbol / '~' {
             def value

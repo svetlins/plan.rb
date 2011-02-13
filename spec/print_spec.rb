@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe "to_scheme" do
+describe "plan_inspect" do
   def run_and_render(code, env=nil)
-    Plan.run(code, env).to_scheme
+    Plan.run(code, env).plan_inspect
   end
 
   def parse_and_render code
-    Plan::Parser.new.parse(code).to_scheme
+    Plan::Parser.new.parse(code).plan_inspect
   end
   
   context "atoms" do

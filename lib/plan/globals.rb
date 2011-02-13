@@ -59,7 +59,7 @@ module Plan
 
   @global_env.set(
     :display,
-    NativeProcedure.new(lambda { |a| puts a.to_scheme })
+    NativeProcedure.new(lambda { |a| puts a.plan_inspect })
   )
 
   @global_env.set(

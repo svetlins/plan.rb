@@ -34,7 +34,7 @@ describe Plan do
 
     end
 
-    context "scheme quote" do
+    context "schemish quote" do
       it "evaluates quoted symbols to ruby symbols" do
         run("(quote a)").should == :a
       end
@@ -45,14 +45,14 @@ describe Plan do
       end
     end
 
-    context "scheme begin" do
+    context "schemish begin" do
       it "evaluates expressions in a begin to the the last expression" do
         run("(begin 1 2 3)").should == 3
         run("(begin var)", {:var => 42}).should == 42
       end
     end
 
-    context "scheme set" do
+    context "schemish set" do
       it "evaluates set by creating or overriding a binding" do
         run("(begin (set! a 69) a)").should == 69
         run("(begin (set! a 69) a)", {:a => 42}).should == 69

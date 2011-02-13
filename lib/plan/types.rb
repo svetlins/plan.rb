@@ -23,21 +23,21 @@ module Plan
       end
     end
 
-    def to_scheme
+    def plan_inspect
       if @cdr.is_a? Pair or @cdr.is_a? NilClass
         # assume linked list and print the whole list
         current = self
         result = []
 
         while current
-          result.push(current.car.to_scheme)
+          result.push(current.car.plan_inspect)
           current = current.cdr
         end
 
         return '(' + result.join(' ') + ')'
       else
         # assume just a single pair
-        return '(' + @car.to_scheme + ' . ' + @cdr.to_scheme + ')'
+        return '(' + @car.plan_inspect + ' . ' + @cdr.plan_inspect + ')'
       end
     end
 
@@ -66,9 +66,9 @@ module Plan
       Exp.new(@exps).evaluate_proc_body @env.extend(bindings)
     end
 
-    def to_scheme
-      p = Plan.make_array(@params).map &:to_scheme
-      e = Plan.make_array(@exps).map &:to_scheme
+    def plan_inspect
+      p = Plan.make_array(@params).map &:plan_inspect
+      e = Plan.make_array(@exps).map &:plan_inspect
 
       "(lambda (#{p.join}) #{e.join})"
     end
@@ -133,31 +133,31 @@ module Plan
 end
 
 class NilClass
-  def to_scheme
+  def plan_inspect
     "nil"
   end
 end
 
 class String
-  def to_scheme
+  def plan_inspect
     '"' + to_s + '"'
   end
 end
 
 class TrueClass
-  def to_scheme
+  def plan_inspect
     '#t'
   end
 end
 
 class FalseClass
-  def to_scheme
+  def plan_inspect
     '#f'
   end
 end
 
 class Object
-  def to_scheme
+  def plan_inspect
     to_s
   end
 end
