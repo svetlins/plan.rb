@@ -58,6 +58,14 @@ module Plan
       Exp.new(@body.cdr.cdr.car)
     end
 
+    def if_else
+      if @body.cdr.cdr.cdr
+        Exp.new(@body.cdr.cdr.cdr.car)
+      else
+        Exp.new(nil)
+      end
+    end
+
     def evaluate_proc_body(env)
       if @body.cdr
         head.evaluate(env)
