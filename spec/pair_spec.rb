@@ -1,6 +1,22 @@
 require 'spec_helper'
 
 describe Plan::Pair do
+  def parse(code)
+    Plan::Parser.new.parse(code)
+  end
+
+  describe "==" do
+    it "returns true for identical expressions" do
+      ["(if (= n 1) 1)", "(1 2 3)", "1", "sym"].each do |exp|
+        parse(exp).should == parse(exp)
+      end
+    end
+
+    it "returns false for different expressions" do
+      parse('(1 2 3)').should_not == parse('(1 1 1)')
+    end
+  end
+
   context "used as linked list" do
     let(:linked_list) do
       Plan::make_linked_list([1,2,3,4])
