@@ -1,6 +1,5 @@
 module Plan
   class Exp
-    #TODO: remove
     attr_reader :body
 
     def initialize(body)
@@ -49,6 +48,14 @@ module Plan
         :'=',
       ]
       @body.is_a? Pair and not not_relevant.include? @body.car
+    end
+
+    def if_pred
+      Exp.new(@body.cdr.car)
+    end
+
+    def if_then
+      Exp.new(@body.cdr.cdr.car)
     end
 
     def evaluate_proc_body(env)
@@ -109,6 +116,10 @@ module Plan
 
     def tail
       Exp.new(@body.cdr)
+    end
+
+    def ==(other)
+      @body == other.body
     end
   end
 end

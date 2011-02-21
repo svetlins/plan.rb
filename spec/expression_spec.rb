@@ -2,7 +2,12 @@ require 'spec_helper'
 
 describe Plan::Exp do
   def make_exp(code)
-    ast = Plan::Parser.new.parse code
+    if code.is_a? String
+      ast = Plan::Parser.new.parse code
+    else
+      code = ast
+    end
+
     Plan::Exp.new ast
   end
 
@@ -42,8 +47,22 @@ describe Plan::Exp do
     end
   end
 
-  # describe Selectors do
-  #   describe "if_pred" do
-  #   end
-  # end
+
+  describe "selectors" do
+    let(:if_exp) do
+      make_exp("(if (= n 1) 1 (* n (fact (- n 1))))")
+    end
+
+    describe "if_pred" do
+      it "gets the predicate part of an if expression" do
+        if_exp.if_pred.should == make_exp("(= n 1)")
+      end
+    end
+
+    describe "if_then" do
+      it "gets the then part of an if expression" do
+        if_exp.if_then.should == make_exp(1)
+      end
+    end
+  end
 end
