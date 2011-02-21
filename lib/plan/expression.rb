@@ -8,7 +8,7 @@ module Plan
     end
 
     def evaluate(env)
-      Plan.evaluation_rules.each do |evaluation_rule|
+      Plan::EVALUATION_RULES.each do |evaluation_rule|
         evaluation_predicate = evaluation_rule[:pred]
         evaluation_procedure = evaluation_rule[:eval]
 
@@ -114,172 +114,170 @@ module Plan
 end
 
 module Plan
+  module EvalRules
+    APPLY_PROC = {
+      :pred => lambda do |exp|
+        exp.is_a? Pair
+      end,
 
-  @apply_proc = {
-    :pred => lambda do |exp|
-      exp.is_a? Pair
-    end,
+      :eval => lambda do |exp, env|
 
-    :eval => lambda do |exp, env|
+        _eval_app = lambda do |exp, env|
 
-      _eval_app = lambda do |exp, env|
+          result = catch :tailcall do
+            procedure_exp = exp.car
+            arg_exps = exp.cdr
 
-        result = catch :tailcall do
-          procedure_exp = exp.car
-          arg_exps = exp.cdr
+            # evaluate procedure
+            procedure = Exp.new(procedure_exp).evaluate(env)
 
-          # evaluate procedure
-          procedure = Exp.new(procedure_exp).evaluate(env)
+            # evaluate arguments left to right
+            arguments = Exp.new(arg_exps).values_list(env)
 
-          # evaluate arguments left to right
-          arguments = Exp.new(arg_exps).values_list(env)
+            # apply
+            procedure.apply arguments
+          end
 
-          # apply
-          procedure.apply arguments
         end
 
+        result = _eval_app[exp, env]
+
+        while result.is_a? Array
+          result = _eval_app[*result]
+        end
+
+        return result
       end
+    }
 
-      result = _eval_app[exp, env]
+    SELF_EVAL = {
+      :pred => lambda do |exp| 
+        [Numeric, String, TrueClass, FalseClass, NilClass].map do |type|
+          exp.is_a? type
+        end.any?
+      end,
 
-      while result.is_a? Array
-        result = _eval_app[*result]
+      :eval => lambda do |exp, env|
+        exp
       end
+    }
 
-      return result
-    end
-  }
+    VAR_LOOKUP = {
+      :pred => lambda do |exp|
+        exp.is_a? Symbol
+      end,
 
-  @self_eval = {
-    :pred => lambda do |exp| 
-      [Numeric, String, TrueClass, FalseClass, NilClass].map do |type|
-        exp.is_a? type
-      end.any?
-    end,
-
-    :eval => lambda do |exp, env|
-      exp
-    end
-  }
-
-  @var_lookup = {
-    :pred => lambda do |exp|
-      exp.is_a? Symbol
-    end,
-
-    :eval => lambda do |exp, env|
-      env.get(exp)
-    end
-  }
-
-  @quotation = {
-    :pred => lambda do |exp|
-      Exp.new(exp).tagged_list? 'quote'
-    end,
-    :eval => lambda do |exp, env|
-      exp.cdr.car
-    end
-  }
-
-  @begin_exp = {
-    :pred => lambda do |exp|
-      Exp.new(exp).tagged_list? 'begin'
-    end,
-    :eval => lambda do |exp, env|
-      Exp.new(exp).evaluate_begin env
-    end
-  }
-
-  @define_or_set = {
-    :pred => lambda do |exp|
-      Exp.new(exp).tagged_list? 'set!' or Exp.new(exp).tagged_list? 'define'
-    end,
-    :eval => lambda do |exp, env|
-      variable = exp.cdr.car
-
-      value = Exp.new(exp.cdr.cdr.car).evaluate(env)
-
-      env.set(variable, value)
-    end
-  }
-
-
-  @if_exp = {
-    :pred => lambda do |exp|
-      Exp.new(exp).tagged_list? 'if'
-    end,
-    :eval => lambda do |exp, env|
-      conseq_exp, conseq_env = Exp.new(exp).eval_if_pred env
-
-      Exp.new(conseq_exp).evaluate conseq_env
-    end
-  }
-
-  @lambda_exp = {
-    :pred => lambda do |exp|
-      Exp.new(exp).tagged_list? 'lambda'
-    end,
-    :eval => lambda do |exp, env|
-      var_list = exp.cdr.car
-      exps = exp.cdr.cdr
-
-      Procedure.new(var_list, exps, env)
-    end
-  }
-
-  @call_cc = {
-    :pred => lambda do |exp|
-      Exp.new(exp).tagged_list? 'call/cc'
-    end,
-    :eval => lambda do |exp, env|
-      procedure = Exp.new(exp.cdr.car).evaluate(env)
-
-
-      # prepare escape procedure for current callcc
-      this_escape_value = nil
-
-      escape = NativeProcedure.new(lambda do |escape_value|
-        this_escape_value = escape_value
-        throw :escape, {:origin => :escape_value, :value => escape_value}
-      end)
-
-
-      # apply procedure on prepared escaped procedure
-      result = catch :escape do
-        result = procedure.apply(
-          Pair.new(escape, :nil)
-        )
-
-        {:origin => :return_value, :value => result}
+      :eval => lambda do |exp, env|
+        env.get(exp)
       end
+    }
 
-      case result[:origin]
-      when :escape_value
-        if result[:value].equal? this_escape_value
+    QUOTATION = {
+      :pred => lambda do |exp|
+        Exp.new(exp).tagged_list? 'quote'
+      end,
+      :eval => lambda do |exp, env|
+        exp.cdr.car
+      end
+    }
+
+    BEGIN_EXP = {
+      :pred => lambda do |exp|
+        Exp.new(exp).tagged_list? 'begin'
+      end,
+      :eval => lambda do |exp, env|
+        Exp.new(exp).evaluate_begin env
+      end
+    }
+
+    DEFINE_OR_SET = {
+      :pred => lambda do |exp|
+        Exp.new(exp).tagged_list? 'set!' or Exp.new(exp).tagged_list? 'define'
+      end,
+      :eval => lambda do |exp, env|
+        variable = exp.cdr.car
+
+        value = Exp.new(exp.cdr.cdr.car).evaluate(env)
+
+        env.set(variable, value)
+      end
+    }
+
+
+    IF_EXP = {
+      :pred => lambda do |exp|
+        Exp.new(exp).tagged_list? 'if'
+      end,
+      :eval => lambda do |exp, env|
+        conseq_exp, conseq_env = Exp.new(exp).eval_if_pred env
+
+        Exp.new(conseq_exp).evaluate conseq_env
+      end
+    }
+
+    LAMBDA_EXP = {
+      :pred => lambda do |exp|
+        Exp.new(exp).tagged_list? 'lambda'
+      end,
+      :eval => lambda do |exp, env|
+        var_list = exp.cdr.car
+        exps = exp.cdr.cdr
+
+        Procedure.new(var_list, exps, env)
+      end
+    }
+
+    CALL_CC = {
+      :pred => lambda do |exp|
+        Exp.new(exp).tagged_list? 'call/cc'
+      end,
+      :eval => lambda do |exp, env|
+        procedure = Exp.new(exp.cdr.car).evaluate(env)
+
+
+        # prepare escape procedure for current callcc
+        this_escape_value = nil
+
+        escape = NativeProcedure.new(lambda do |escape_value|
+                                       this_escape_value = escape_value
+                                       throw :escape, {:origin => :escape_value, :value => escape_value}
+                                     end)
+
+
+        # apply procedure on prepared escaped procedure
+        result = catch :escape do
+          result = procedure.apply(
+                                   Pair.new(escape, :nil)
+                                   )
+
+          {:origin => :return_value, :value => result}
+        end
+
+        case result[:origin]
+        when :escape_value
+          if result[:value].equal? this_escape_value
+            return result[:value]
+          else
+            #not for us, pass up
+            throw :escape, result
+          end
+        when :return_value
           return result[:value]
-        else
-          #not for us, pass up
-          throw :escape, result
         end
-      when :return_value
-        return result[:value]
+
       end
-
-    end
-  }
-
-  def self.evaluation_rules
-    [
-      @self_eval,
-      @var_lookup,
-      @quotation,
-      @begin_exp,
-      @define_or_set,
-      @if_exp,
-      @lambda_exp,
-      @call_cc,
-      @apply_proc,
-    ]
+    }
   end
 
+  EVALUATION_RULES = [
+     EvalRules::SELF_EVAL,
+     EvalRules::VAR_LOOKUP,
+     EvalRules::QUOTATION,
+     EvalRules::BEGIN_EXP,
+     EvalRules::DEFINE_OR_SET,
+     EvalRules::IF_EXP,
+     EvalRules::LAMBDA_EXP,
+     EvalRules::CALL_CC,
+     EvalRules::APPLY_PROC
+  ]
 end

@@ -36,6 +36,14 @@ describe Plan::Exp do
     it "gets the tail of list" do
       make_exp("(1 2 3)").tail.body.should == make_exp("(2 3)").body
     end
+
+    it "fails when applied to something different than a list" do
+      lambda { make_exp("stuff").tail }.should raise_error(NoMethodError)
+    end
   end
 
+  # describe Selectors do
+  #   describe "if_pred" do
+  #   end
+  # end
 end
