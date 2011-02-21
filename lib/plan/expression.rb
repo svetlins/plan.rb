@@ -102,19 +102,10 @@ module Plan
     end
 
     def eval_if_pred(env)
-      predicate = @body.cdr.car
-      true_conseq = @body.cdr.cdr.car
-
-      if @body.cdr.cdr.cdr
-        false_conseq = @body.cdr.cdr.cdr.car
+      if if_pred.evaluate(env)
+        return [if_then.body, env]
       else
-        false_conseq = nil
-      end
-
-      if Exp.new(predicate).evaluate(env)
-        return [true_conseq, env]
-      else
-        return [false_conseq, env]
+        return [if_else.body, env]
       end
     end
 
@@ -228,7 +219,7 @@ module Plan
         Exp.new(exp).tagged_list? 'if'
       end,
       :eval => lambda do |exp, env|
-        conseq_exp, conseq_env = Exp.new(exp).eval_if_pred env
+        conseq_exp, conseq_env = Exp.new(exp).eval_if_pred(env)
 
         Exp.new(conseq_exp).evaluate conseq_env
       end
